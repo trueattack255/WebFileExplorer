@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Helpers;
 
 namespace Common.Extensions
 {
@@ -14,12 +15,12 @@ namespace Common.Extensions
                 return startDirectorySize;
             }
 
-            foreach (var fileInfo in directoryInfo.GetFiles())
+            foreach (var fileInfo in FaultWrapper.Do(directoryInfo.GetFiles).EmptyIfNull())
             {
                 Interlocked.Add(ref startDirectorySize, fileInfo.Length);
             }
 
-            Parallel.ForEach(directoryInfo.GetDirectories(), subDirectory =>
+            Parallel.ForEach(FaultWrapper.Do(directoryInfo.GetDirectories).EmptyIfNull(), subDirectory =>
             {
                 Interlocked.Add(ref startDirectorySize, GetDirectorySize(subDirectory));
             });

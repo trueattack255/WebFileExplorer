@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using Common.Constants;
 using Common.Enums;
+using Common.Exceptions;
 using Core.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using WebApi.Args;
+using WebApi.Contracts;
 using WebApi.Dto;
-using WebApi.Providers;
 
 namespace WebApi.Controllers
 {
@@ -17,10 +19,19 @@ namespace WebApi.Controllers
     public class FileSystemController : ControllerBase
     {
         private readonly ILogger<FileSystemController> _logger;
+        private readonly IDataProvider<FSNodeExtendedInfo> _detailDirectoryProvider;
+        private readonly IDataProvider<FSNodeInfo> _directoryProvider;
+        private readonly IDataProvider<FSNodeBaseInfo[]> _driveProvider;
         
-        public FileSystemController(ILogger<FileSystemController> logger)
+        public FileSystemController(ILogger<FileSystemController> logger, 
+            IDataProvider<FSNodeExtendedInfo> detailDirectoryProvider,
+            IDataProvider<FSNodeInfo> directoryProvider,
+            IDataProvider<FSNodeBaseInfo[]> driveProvider)
         {
             _logger = logger;
+            _detailDirectoryProvider = detailDirectoryProvider;
+            _directoryProvider = directoryProvider;
+            _driveProvider = driveProvider;
         }
         
         /// <summary>
@@ -30,9 +41,24 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<FSNodeBaseInfo>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces("application/json")]
-        public IActionResult GetRootInfos()
+        public IActionResult GetDriveInfos()
         {
-            return Ok(new DriveProvider().GetDrives());
+            _logger.LogDebug(nameof(GetDriveInfos));
+            try
+            {
+                var result = _driveProvider.GetData(null);
+                return Ok(result);
+            }
+            catch (AppBaseException e)
+            {
+                _logger.LogError($"{nameof(GetDriveInfos)} - {e}");
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"{nameof(GetDriveInfos)} - {e}");
+                throw;
+            }
         }
 
         /// <summary>
@@ -52,10 +78,26 @@ namespace WebApi.Controllers
             string path,
             FSObjectFilter filter = FSObjectFilter.All,
             SortMode sortMode = SortMode.Size,
-            SortDirection sortDirection = SortDirection.Descending)
+            SortDirection sortDirection = SortDirection.Ascending)
         {
-            var dir = new DirectoryInfo(path);
-            return Ok(new DirectoryProvider(dir, sortMode, sortDirection).GetDetailedInfo(filter));
+            _logger.LogDebug(nameof(GetDirectoryDetailedInfos));
+            
+            var args = new FSBaseInfoArgs { Path = path, Filter = filter, SortMode = sortMode, SortDirection = sortDirection };
+            try
+            {
+                var result = _detailDirectoryProvider.GetData(args);
+                return Ok(result);
+            }
+            catch (AppBaseException e)
+            {
+                _logger.LogError($"{nameof(GetDirectoryDetailedInfos)} - {e}", args);
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"{nameof(GetDirectoryDetailedInfos)} - {e}", args);
+                throw;
+            }
         }
 
         /// <summary>
@@ -73,8 +115,24 @@ namespace WebApi.Controllers
             string path,
             FSObjectFilter filter = FSObjectFilter.Directories)
         {
-            var dir = new DirectoryInfo(path);
-            return Ok(new DirectoryProvider(dir, SortMode.Name, SortDirection.Ascending).GetInfo(filter));
+            _logger.LogDebug(nameof(GetDirectoryInfos));
+            
+            var args = new FSBaseInfoArgs { Path = path, Filter = filter, SortMode = SortMode.Name, SortDirection = SortDirection.Ascending };
+            try
+            {
+                var result = _directoryProvider.GetData(args);
+                return Ok(result);
+            }
+            catch (AppBaseException e)
+            {
+                _logger.LogError($"{nameof(GetDirectoryInfos)} - {e}", args);
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"{nameof(GetDirectoryInfos)} - {e}", args);
+                throw;
+            }
         }
     }
 }

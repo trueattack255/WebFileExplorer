@@ -3,44 +3,18 @@ using Common.Enums;
 using Core.Comparers;
 using Core.Enums;
 using Core.Implementations.Containers;
+using WebApi.Args;
+using WebApi.Contracts;
 using WebApi.Dto;
+using static WebApi.Helpers.FSDictionaryHelper;
 
 namespace WebApi.Providers
 {
-	internal sealed class DirectoryProvider
+	internal class DirectoryProvider : IDataProvider<FSNodeInfo>
 	{
-		readonly SortMode _sort;
-	    readonly SortDirection _sortDirection;
-	    
-	    readonly DirectoryInfo _directory;
-
-	    internal DirectoryProvider (DirectoryInfo directory, SortMode sort, SortDirection sortDirection) 
-	    {
-		    _directory = directory;
-			_sort = sort;
-			_sortDirection = sortDirection;
-		}
-
-	    public FSNodeInfo GetInfo(FSObjectFilter filter)
-	    {
-		    return FSNodeInfo.Projection(GetInfoInternal(filter));
-	    }
-	    
-		public FSNodeExtendedInfo GetDetailedInfo(FSObjectFilter filter)
+		public FSNodeInfo GetData(FSBaseInfoArgs args)
 		{
-			return FSNodeExtendedInfo.Projection(GetInfoInternal(filter));
-		}
-
-		private FSDirectory GetInfoInternal(FSObjectFilter filter)
-		{
-			if (!_directory.Exists)
-				return null;
-
-			var dir = FSDirectory.Load(_directory, filter);
-			var comparer = new FSNodeComparer(_sort, _sortDirection);
-			dir.Objects.Sort(comparer);
-
-			return dir;
+			return FSNodeInfo.Projection(GetDirectory(args.Path, args.SortMode, args.SortDirection, args.Filter));
 		}
 	}
 }
