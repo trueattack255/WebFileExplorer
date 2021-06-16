@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Common.Constants;
 using Core.Objects;
 
 namespace WebApi.Dto
@@ -16,6 +17,7 @@ namespace WebApi.Dto
             Name = directory.Name,
             Path = directory.Path,
             Type = directory.Type,
+            DateModified = directory.LastWriteTime.ToString(CommonConstants.DateFormat),
             Children = new List<FSNodeInfo>(),
             IsLeaf = directory.IsLeaf
         };

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Common.Constants;
 using Core.Objects;
 
 namespace WebApi.Dto
@@ -22,6 +23,7 @@ namespace WebApi.Dto
             Size = directory.Size,
             Extension = directory.Extension,
             Children = new List<FSNodeExtendedInfo>(),
+            DateModified = directory.LastWriteTime.ToString(CommonConstants.DateFormat),
             IsLeaf = directory.IsLeaf
         };
     }
