@@ -12,7 +12,7 @@ namespace Common.Helpers
             var result = default(T);
             
             try { result = action(); }
-            catch { /*Ignore exceptions*/ }
+            catch { /*Игнорировать исключения*/ }
 
             return result;
         }

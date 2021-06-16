@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Common.Enums;
 using Core.Comparers;
 using Core.Enums;
@@ -21,10 +22,9 @@ namespace WebApi.Helpers
                 throw new FS.DirectoryNotFoundException(path);
 
             var directory = FSDirectory.Load(info, filter);
-            var comparer = new FSNodeComparer(sort, sortDirection);
-            directory.Objects.Sort(comparer);
-
-            return directory.Objects.ToArray();
+            return directory.Objects
+                .OrderBy(x => x, new FSNodeComparer(sort, sortDirection))
+                .ToArray();
         }
     }
 }

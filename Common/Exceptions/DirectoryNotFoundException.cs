@@ -2,7 +2,7 @@
 {
     public class DirectoryNotFoundException : AppBaseException
     {
-        public DirectoryNotFoundException(string path) : base($"Could not find a part of the path {path}")
+        public DirectoryNotFoundException(string path) : base($"Не удалось найти часть пути {path}")
         { }
     }
 }
