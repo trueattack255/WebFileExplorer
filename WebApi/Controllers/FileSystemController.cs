@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using WebApi.Args;
 using WebApi.Contracts;
 using WebApi.Dto;
+using WebApi.Providers;
 
 namespace WebApi.Controllers
 {
@@ -16,12 +17,12 @@ namespace WebApi.Controllers
         private readonly ILogger<FileSystemController> _logger;
         private readonly IDataProvider<FSNodeExtendedInfo[]> _detailDirectoryProvider;
         private readonly IDataProvider<FSNodeInfo[]> _directoryProvider;
-        private readonly IDataProvider<FSNodeBaseInfo[]> _driveProvider;
+        private readonly IDataProvider<FSNodeExtendedInfo[]> _driveProvider;
         
         public FileSystemController(ILogger<FileSystemController> logger, 
-            IDataProvider<FSNodeExtendedInfo[]> detailDirectoryProvider,
             IDataProvider<FSNodeInfo[]> directoryProvider,
-            IDataProvider<FSNodeBaseInfo[]> driveProvider)
+            DetailDirectoryProvider detailDirectoryProvider,
+            DriveProvider driveProvider)
         {
             _logger = logger;
             _detailDirectoryProvider = detailDirectoryProvider;
@@ -33,7 +34,7 @@ namespace WebApi.Controllers
         /// Возвращает информацию о дисках
         /// </summary>
         [HttpGet("drives")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FSNodeBaseInfo[]))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FSNodeExtendedInfo[]))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces("application/json")]
         public IActionResult GetDriveInfos()

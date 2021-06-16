@@ -1,18 +1,19 @@
 ﻿using System.IO;
 using System.Linq;
-using Core.Enums;
+using Core.Implementations.Containers;
 using WebApi.Args;
 using WebApi.Contracts;
 using WebApi.Dto;
 
 namespace WebApi.Providers
 {
-    internal sealed class DriveProvider : IDataProvider<FSNodeBaseInfo[]>
+    public sealed class DriveProvider : IDataProvider<FSNodeExtendedInfo[]>
     {
-        public FSNodeBaseInfo[] GetData(FSBaseInfoArgs args)
+        public FSNodeExtendedInfo[] GetData(FSBaseInfoArgs args)
         {
             return DriveInfo.GetDrives()
-                .Select(x => new FSNodeBaseInfo { Name = x.Name, Path = x.Name, Type = FSObjectType.Drive })
+                .Select(x => new FSDrive(x))
+                .Select(FSNodeExtendedInfo.Projection)
                 .ToArray();
         }
     }

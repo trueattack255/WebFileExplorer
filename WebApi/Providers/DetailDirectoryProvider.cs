@@ -6,7 +6,7 @@ using static WebApi.Helpers.FSDictionaryHelper;
 
 namespace WebApi.Providers
 {
-	internal class DetailDirectoryProvider : IDataProvider<FSNodeExtendedInfo[]>
+	public class DetailDirectoryProvider : IDataProvider<FSNodeExtendedInfo[]>
 	{
 		public FSNodeExtendedInfo[] GetData(FSBaseInfoArgs args)
 		{
