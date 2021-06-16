@@ -2,7 +2,7 @@ using System.Linq;
 using WebApi.Args;
 using WebApi.Contracts;
 using WebApi.Dto;
-using static WebApi.Helpers.FSDictionaryHelper;
+using static WebApi.Helpers.FSNodeHelper;
 
 namespace WebApi.Providers
 {

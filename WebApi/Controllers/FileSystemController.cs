@@ -37,12 +37,12 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FSNodeExtendedInfo[]))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces("application/json")]
-        public IActionResult GetDriveInfos()
+        public IActionResult GetDriveInfos([FromQuery] FSDriveInfoArgs args)
         {
             _logger.LogDebug(nameof(GetDriveInfos));
             try
             {
-                var result = _driveProvider.GetData(null);
+                var result = _driveProvider.GetData(args);
                 return Ok(result);
             }
             catch (AppBaseException e)
@@ -64,7 +64,7 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FSNodeExtendedInfo[]))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces("application/json")]
-        public IActionResult GetDirectoryDetailedInfos([FromQuery] FSBaseInfoArgs args)
+        public IActionResult GetDirectoryDetailedInfos([FromQuery] FSDetailedInfoArgs args)
         {
             _logger.LogDebug(nameof(GetDirectoryDetailedInfos));
             

@@ -1,9 +1,8 @@
-﻿using System.IO;
-using System.Linq;
-using Core.Implementations.Containers;
+﻿using System.Linq;
 using WebApi.Args;
 using WebApi.Contracts;
 using WebApi.Dto;
+using WebApi.Helpers;
 
 namespace WebApi.Providers
 {
@@ -11,8 +10,7 @@ namespace WebApi.Providers
     {
         public FSNodeExtendedInfo[] GetData(FSBaseInfoArgs args)
         {
-            return DriveInfo.GetDrives()
-                .Select(x => new FSDrive(x))
+            return FSNodeHelper.GetRoot(args.Path, args.SortMode, args.SortDirection)
                 .Select(FSNodeExtendedInfo.Projection)
                 .ToArray();
         }

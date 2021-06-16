@@ -9,9 +9,9 @@ using FS = Common.Exceptions;
 
 namespace WebApi.Helpers
 {
-    public class FSDictionaryHelper
+    public class FSNodeHelper
     {
-        private FSDictionaryHelper()
+        private FSNodeHelper()
         { }
         
         public static FSNode[] GetDirectory(string path, SortMode sort, SortDirection sortDirection, FSObjectFilter filter)
@@ -23,6 +23,14 @@ namespace WebApi.Helpers
 
             var directory = FSDirectory.Load(info, filter);
             return directory.Objects
+                .OrderBy(x => x, new FSNodeComparer(sort, sortDirection))
+                .ToArray();
+        }
+
+        public static FSNode[] GetRoot(string path, SortMode sort, SortDirection sortDirection)
+        {
+            return DriveInfo.GetDrives()
+                .Select(x => new FSDrive(x))
                 .OrderBy(x => x, new FSNodeComparer(sort, sortDirection))
                 .ToArray();
         }
