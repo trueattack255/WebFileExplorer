@@ -3,6 +3,7 @@ using Common.Enums;
 using Core.Comparers;
 using Core.Enums;
 using Core.Implementations.Containers;
+using Core.Objects;
 using FS = Common.Exceptions;
 
 namespace WebApi.Helpers
@@ -12,7 +13,7 @@ namespace WebApi.Helpers
         private FSDictionaryHelper()
         { }
         
-        public static FSDirectory GetDirectory(string path, SortMode sort, SortDirection sortDirection, FSObjectFilter filter)
+        public static FSNode[] GetDirectory(string path, SortMode sort, SortDirection sortDirection, FSObjectFilter filter)
         {
             var info = new DirectoryInfo(path);
 
@@ -23,7 +24,7 @@ namespace WebApi.Helpers
             var comparer = new FSNodeComparer(sort, sortDirection);
             directory.Objects.Sort(comparer);
 
-            return directory;
+            return directory.Objects.ToArray();
         }
     }
 }

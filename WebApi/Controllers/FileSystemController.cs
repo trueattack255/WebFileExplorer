@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Common.Constants;
-using Common.Enums;
 using Common.Exceptions;
-using Core.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -19,13 +14,13 @@ namespace WebApi.Controllers
     public class FileSystemController : ControllerBase
     {
         private readonly ILogger<FileSystemController> _logger;
-        private readonly IDataProvider<FSNodeExtendedInfo> _detailDirectoryProvider;
-        private readonly IDataProvider<FSNodeInfo> _directoryProvider;
+        private readonly IDataProvider<FSNodeExtendedInfo[]> _detailDirectoryProvider;
+        private readonly IDataProvider<FSNodeInfo[]> _directoryProvider;
         private readonly IDataProvider<FSNodeBaseInfo[]> _driveProvider;
         
         public FileSystemController(ILogger<FileSystemController> logger, 
-            IDataProvider<FSNodeExtendedInfo> detailDirectoryProvider,
-            IDataProvider<FSNodeInfo> directoryProvider,
+            IDataProvider<FSNodeExtendedInfo[]> detailDirectoryProvider,
+            IDataProvider<FSNodeInfo[]> directoryProvider,
             IDataProvider<FSNodeBaseInfo[]> driveProvider)
         {
             _logger = logger;
@@ -38,7 +33,7 @@ namespace WebApi.Controllers
         /// Возвращает информацию о дисках
         /// </summary>
         [HttpGet("drives")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<FSNodeBaseInfo>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FSNodeBaseInfo[]))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces("application/json")]
         public IActionResult GetDriveInfos()
@@ -64,25 +59,14 @@ namespace WebApi.Controllers
         /// <summary>
         /// Возвращает детальную информацию по каталогу
         /// </summary>
-        /// <param name="path">Абсолютный путь</param>
-        /// <param name="filter">Фильтер</param>
-        /// <param name="sortMode">Режим сортировки</param>
-        /// <param name="sortDirection">Направление сортировки</param>
         [HttpGet("directories/detailed")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FSNodeExtendedInfo))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FSNodeExtendedInfo[]))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces("application/json")]
-        public IActionResult GetDirectoryDetailedInfos(
-            [Required]
-            [RegularExpression(CommonConstants.PathRegexp, ErrorMessage = "Path validation error")]
-            string path,
-            FSObjectFilter filter = FSObjectFilter.All,
-            SortMode sortMode = SortMode.Size,
-            SortDirection sortDirection = SortDirection.Ascending)
+        public IActionResult GetDirectoryDetailedInfos([FromQuery] FSBaseInfoArgs args)
         {
             _logger.LogDebug(nameof(GetDirectoryDetailedInfos));
             
-            var args = new FSBaseInfoArgs { Path = path, Filter = filter, SortMode = sortMode, SortDirection = sortDirection };
             try
             {
                 var result = _detailDirectoryProvider.GetData(args);
@@ -103,21 +87,14 @@ namespace WebApi.Controllers
         /// <summary>
         /// Возвращает информацию по каталогу
         /// </summary>
-        /// <param name="path">Абсолютный путь</param>
-        /// <param name="filter">Фильтер</param>
         [HttpGet("directories")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FSNodeInfo))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FSNodeInfo[]))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces("application/json")]
-        public IActionResult GetDirectoryInfos(
-            [Required]
-            [RegularExpression(CommonConstants.PathRegexp, ErrorMessage = "Path validation error")]
-            string path,
-            FSObjectFilter filter = FSObjectFilter.Directories)
+        public IActionResult GetDirectoryInfos([FromQuery] FSInfoArgs args)
         {
             _logger.LogDebug(nameof(GetDirectoryInfos));
             
-            var args = new FSBaseInfoArgs { Path = path, Filter = filter, SortMode = SortMode.Name, SortDirection = SortDirection.Ascending };
             try
             {
                 var result = _directoryProvider.GetData(args);

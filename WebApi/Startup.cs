@@ -32,9 +32,9 @@ namespace WebApi
                 });
             
             services.AddCors();
-            services.AddScoped<IDataProvider<FSNodeExtendedInfo>, DetailDirectoryProvider>();
-            services.AddScoped<IDataProvider<FSNodeInfo>, DirectoryProvider>();
+            services.AddScoped<IDataProvider<FSNodeInfo[]>, DirectoryProvider>();
             services.AddScoped<IDataProvider<FSNodeBaseInfo[]>, DriveProvider>();
+            services.AddScoped<IDataProvider<FSNodeExtendedInfo[]>, DetailDirectoryProvider>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "StatisticApi", Version = "v1"});

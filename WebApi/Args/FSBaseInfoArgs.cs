@@ -1,13 +1,17 @@
-﻿using Common.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using Common.Constants;
+using Common.Enums;
 using Core.Enums;
 
 namespace WebApi.Args
 {
     public class FSBaseInfoArgs
     {
-        public string Path { get; set; }
-        public SortMode SortMode { get; set; }
-        public SortDirection SortDirection { get; set; }
-        public FSObjectFilter Filter { get; set; }
+        [Required]
+        [RegularExpression(CommonConstants.PathRegexp, ErrorMessage = "Path validation error")]
+        public virtual string Path { get; set; }
+        public virtual SortMode SortMode { get; set; }
+        public virtual SortDirection SortDirection { get; set; }
+        public virtual FSObjectFilter Filter { get; set; }
     }
 }

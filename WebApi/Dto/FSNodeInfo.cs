@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
-using Core.Implementations.Containers;
+using Core.Objects;
 
 namespace WebApi.Dto
 {
@@ -12,27 +11,13 @@ namespace WebApi.Dto
         public bool IsLeaf { get; set; }
         public IList<FSNodeInfo> Children { get; set; }
 
-        public static Func<FSDirectory, FSNodeInfo> Projection => (directory) =>
+        public static Func<FSNode, FSNodeInfo> Projection => (directory) => new FSNodeInfo
         {
-            var children = directory.Objects
-                .Select(x => new FSNodeInfo
-                {
-                    Name = x.Name,
-                    Path = x.Path,
-                    Type = x.Type,
-                    Children = new List<FSNodeInfo>(),
-                    IsLeaf = x.IsLeaf
-                })
-                .ToArray();
-
-            return new FSNodeInfo
-            {
-                Name = directory.Name,
-                Path = directory.Path,
-                Type = directory.Type,
-                Children = children,
-                IsLeaf = !children.Any()
-            };
+            Name = directory.Name,
+            Path = directory.Path,
+            Type = directory.Type,
+            Children = new List<FSNodeInfo>(),
+            IsLeaf = directory.IsLeaf
         };
     }
 }
