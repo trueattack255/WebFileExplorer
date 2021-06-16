@@ -32,8 +32,8 @@ namespace WebApi
                 });
             
             services.AddCors();
-            services.AddScoped<IDataProvider<FSNodeInfo[]>, DirectoryProvider>();
             services.AddScoped<DetailDirectoryProvider>();
+            services.AddScoped<DirectoryProvider>();
             services.AddScoped<DriveProvider>();
             services.AddSwaggerGen(c =>
             {

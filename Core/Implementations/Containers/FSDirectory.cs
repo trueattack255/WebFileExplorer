@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -52,7 +52,7 @@ namespace Core.Implementations.Containers
             {
                 case FSObjectFilter.Directories:
                     AddChildDirectories();
-                    break;
+                    return;
                 case FSObjectFilter.Files:
                     AddChildFiles();
                     break;
@@ -76,9 +76,7 @@ namespace Core.Implementations.Containers
             Objects.AddRange(FaultWrapper
                 .Do(() => _directory.GetDirectories(CommonConstants.SearchTerm, SearchOption.TopDirectoryOnly))
                 .EmptyIfNull()
-                .Where(x =>
-                    !x.Attributes.HasFlag(FileAttributes.Hidden) ||
-                    !x.Attributes.HasFlag(FileAttributes.System))
+                .Where(x => !x.Attributes.HasFlag(FileAttributes.Hidden | FileAttributes.System))
                 .Select(x => new FSDirectory(x)));
         }
 
@@ -87,9 +85,7 @@ namespace Core.Implementations.Containers
             Objects.AddRange(FaultWrapper
                 .Do(() => _directory.GetFiles(CommonConstants.SearchTerm, SearchOption.TopDirectoryOnly))
                 .EmptyIfNull()
-                .Where(x =>
-                    !x.Attributes.HasFlag(FileAttributes.Hidden) ||
-                    !x.Attributes.HasFlag(FileAttributes.System))
+                .Where(x => !x.Attributes.HasFlag(FileAttributes.Hidden | FileAttributes.System))
                 .Select(x => new FSFile(x)));
         }
     }

@@ -20,7 +20,7 @@ namespace WebApi.Controllers
         private readonly IDataProvider<FSNodeExtendedInfo[]> _driveProvider;
         
         public FileSystemController(ILogger<FileSystemController> logger, 
-            IDataProvider<FSNodeInfo[]> directoryProvider,
+            DirectoryProvider directoryProvider,
             DetailDirectoryProvider detailDirectoryProvider,
             DriveProvider driveProvider)
         {
